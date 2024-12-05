@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 leftbolder back">Your Reviews and Likes</h1>
+
+    <!-- Liked Books Section -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h5 mb-0">Your Liked Books</h2>
+        </div>
+        <div class="card-body">
+            {% if liked_books|length > 0 %}
+            <ul class="list-group">
+                {% for book in liked_books %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <strong>{{ book.title }}</strong>
+                    <form action="{{ url_for('main.unlike_book', book_id=book.id) }}" method="POST" class="m-0">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-danger btn-sm">Unlike</button>
+                    </form>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">You haven't liked any books yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h2 class="h5 mb-0">Your Reviews</h2>
+        </div>
+        <div class="card-body">
+            {% if reviews|length > 0 %}
+            <ul class="list-group">
+                {% for review, book_title in reviews %}
+                <li class="list-group-item">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <strong>{{ book_title }}:</strong> {{ review.content }}
+                        </div>
+                        <small class="text-muted">{{ review.created_at.strftime('%B %d, %Y') }}</small>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-muted">You haven't written any reviews yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

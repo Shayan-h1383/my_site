@@ -1,0 +1,22 @@
+
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4 leftbolder">Account Details</h1>
+
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-info text-white">
+            <h2 class="h5 mb-0">Your Account Information</h2>
+        </div>
+        <div class="card-body">
+            <!-- User Information -->
+            <p><strong>Username:</strong> {{ current_user.username }}</p>
+            <p><strong>Password:</strong> **********</p>  <!-- Password masked -->
+            <p><strong>Number of Reviews:</strong> {{ current_user.reviews.count() }}</p>
+            <p><strong>Number of Liked Books:</strong> {{ current_user.liked_books|length }}</p>
+        </div>
+    </div>
+{% endblock %}

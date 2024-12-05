@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <hr class="line1">
+    <h1 class="leftbolder display-4  text-wrap backgroundgrey">Cirque Du Freak The Saga of Darren Shan</h1>
+    <hr class="line1">
+    <div class="row">
+        {% for book in books %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body backgroundgrey">
+                    <h5 class="card-title leftbold">{{ book.title }}</h5>
+                    <p class="card-text leftfade text-truncate">{{ book.description }}</p>
+                    <p><strong>Reviews:</strong> {{ book.reviews.count() }}</p>
+                    <p><strong>Likes:</strong> {{ book.liked_by|length }}</p>
+                    <a href="{{ url_for('main.book_review', book_id=book.id) }}" class="btn btn-primary">
+                        Reviews
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

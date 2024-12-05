@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2 class="leftbolder display-4 text-wrap backgroundgrey">Register</h2>
+    <form method="POST">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+      <!-- Username Field -->
+      <div class="form-group">
+        <label class="left padding" for="username">Username</label>
+        <input type="text" class="form-control" id="username" name="username" value="{{ form.username.data }}" required>
+        {% if form.username.errors %}
+          <div class="text-danger">
+            <ul>
+              {% for error in form.username.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label class="left padding" for="password">Password</label>
+        <input type="password" class="form-control" id="password" name="password" value="{{ form.password.data }}" required>
+        {% if form.password.errors %}
+          <div class="text-danger">
+            <ul>
+              {% for error in form.password.errors %}
+                <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Submit Button -->
+      <div class="padding">
+        <button type="submit" class="btn btn-primary">Register</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}
