@@ -15,47 +15,6 @@ def home():
     books = Book.query.all()
     return render_template('home.html', books=books, user=current_user)
 
-# Book Detail Page
-@bp.route('/book/<int:book_id>', methods=['GET', 'POST'])
-def book_detail(book_id):
-    book = Book.query.get_or_404(book_id)
-
-    if request.method == 'POST':
-        if not current_user.is_authenticated:
-            flash('You must be logged in to submit a review!', 'danger')
-            return redirect(url_for('main.login'))
-
-        # Add a review
-        content = request.form.get('content')
-        if content:
-            review = Review(content=content, user_id=current_user.id, book_id=book_id)
-            db.session.add(review)
-            db.session.commit()
-            flash('Review submitted successfully!', 'success')
-        else:
-            flash('Review cannot be empty.', 'danger')
-
-    return render_template('book_detail.html', book=book, user=current_user)
-
-@bp.route('/like/<int:book_id>', methods=['POST'])
-@login_required
-def like_book(book_id):
-    book = Book.query.get_or_404(book_id)
-
-    # Check if the user has liked this book
-    if book not in current_user.liked_books:
-        current_user.liked_books.append(book)
-        db.session.commit()
-        liked = True
-    else:
-        current_user.liked_books.remove(book)
-        db.session.commit()
-        liked = False
-
-    # Redirect to the book detail page or another appropriate location
-    flash('Like status updated!', 'success')
-    return redirect(url_for('main.book_detail', book_id=book_id))
-
 @bp.route('/unlike/<int:book_id>', methods=['POST'])
 @login_required
 def unlike_book(book_id):
@@ -121,19 +80,20 @@ def register():
             # Handle registration logic (e.g., save user, hash password)
             username = request.form.get('username')
             password = request.form.get('password')
+            email = request.form.get('email')
             existing_user = User.query.filter_by(username=username).first()
 
             if existing_user:
                 flash('Username already exists.', 'danger')
                 return redirect(url_for('main.register'))
 
-            new_user = User(username=username)
+            new_user = User(username=username, email=email)
             new_user.set_password(password)
             db.session.add(new_user)
             db.session.commit()
-
+            login_user(new_user)
             flash('Registration successful! You can now log in.', 'success')
-            return redirect(url_for('main.login'))
+            return redirect(request.args.get('next') or url_for('main.home'))
         return redirect(url_for('success')) 
     return render_template('register.html', form=form)
     
@@ -165,20 +125,32 @@ def book_review(book_id):
                 db.session.add(review)
                 db.session.commit()
                 flash('Review added successfully!', 'success')
+                return redirect(url_for('main.book_review', book_id=book_id))
             else:
                 flash('Review cannot be empty.', 'danger')
 
-        # Handle liking the book
-        elif 'like' in request.form:
-            if book not in current_user.liked_books:
-                current_user.liked_books.append(book)
-                db.session.commit()
-                flash('Book liked!', 'success')
-            else:
-                current_user.liked_books.remove(book)
-                db.session.commit()
-                flash('Book unliked.', 'info')
-
     return render_template('book_review.html', book=book, reviews=reviews, user=current_user)
+
+
+@bp.route('/like/<int:book_id>', methods=['POST'])
+def like_book(book_id):
+    book = Book.query.get_or_404(book_id)
+
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'You must be logged in to like or unlike a book.'}), 403
+
+    # Handle liking the book
+    if book not in current_user.liked_books:
+        current_user.liked_books.append(book)
+        db.session.commit()
+        liked = True
+    else:
+        current_user.liked_books.remove(book)
+        db.session.commit()
+        liked = False
+
+    # Return updated like status and count
+    likes_count = len(book.liked_by)
+    return jsonify({'liked': liked, 'likes_count': likes_count})
 
 

@@ -6,52 +6,43 @@
     <div class="container backgroundgrey">
         <h1>{{ book.title }}</h1>
         <p>{{ book.description }}</p>
+        <span id="like-count-{{ book.id }}">{{ book.liked_by|length }}</span> likes
 
         <!-- Like Button -->
+        <button id="like-button-{{ book.id }}" class="btn btn-success" onclick="likeBook({{ book.id }})">
+            {% if book in current_user.liked_books %}
+            Unlike
+            {% else %}
+            Like
+            {% endif %}
+        </button>
+
+        <hr>
+
+        <!-- Reviews Section -->
+        <h3>Reviews</h3>
+        <ul class="list-group">
+            {% for review in reviews %}
+            <li class="list-group-item">
+                <strong>{{ review.user.username }}:</strong> {{ review.content }}
+            </li>
+            {% else %}
+            <li class="list-group-item text-muted">No reviews yet. Be the first to add one!</li>
+            {% endfor %}
+        </ul>
+
+        <hr>
+
+        <!-- Add Review Form -->
+        <h4>Add a Review</h4>
         <form method="POST">
+            <!-- CSRF Token -->
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-            <button type="submit" name="like" class="btn btn-success">
-                Like ({{ book.liked_by|length }})
-            </button>
+
+            <div class="form-group">
+                <textarea name="review" class="form-control" rows="3" placeholder="Write your review here"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Submit Review</button>
         </form>
     </div>
-
-    <hr>
-
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="alert-container">
-        {% for category, message in messages %}
-        <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
-
-    <!-- Reviews Section -->
-    <h3>Reviews</h3>
-    <ul class="list-group">
-        {% for review in reviews %}
-        <li class="list-group-item">
-            <strong>{{ review.user.username }}:</strong> {{ review.content }}
-        </li>
-        {% else %}
-        <li class="list-group-item text-muted">No reviews yet. Be the first to add one!</li>
-        {% endfor %}
-    </ul>
-
-    <hr>
-
-    <!-- Add Review Form -->
-    <h4>Add a Review</h4>
-    <form method="POST">
-        <!-- CSRF Token -->
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-        <div class="form-group">
-            <textarea name="review" class="form-control" rows="3" placeholder="Write your review here"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary mt-2">Submit Review</button>
-    </form>
-</div>
-{% endblock %}
+    {% endblock %}

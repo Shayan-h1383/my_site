@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)  # Store hashed password
+    email = db.Column(db.String(120), unique=False, nullable=False)
     reviews = db.relationship('Review', backref='user', lazy='dynamic')
     liked_books = db.relationship(
         'Book', secondary=likes, back_populates='liked_by'

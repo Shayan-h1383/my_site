@@ -6,7 +6,8 @@ function likeBook(bookId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-        },
+            'X-CSRFToken': document.querySelector('input[name="csrf_token"]').value  // Pass CSRF token for security
+        }
     })
     .then(response => response.json())
     .then(data => {

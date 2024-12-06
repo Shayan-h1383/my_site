@@ -12,7 +12,7 @@ with app.app_context():
 
     if not user:
         # If the user does not exist, create a new one
-        new_user = User(username="shayan", password=generate_password_hash("1234"))
+        new_user = User(username="shayan", email="alosodagar@gmail.com", password=generate_password_hash("1234"))
         db.session.add(new_user)
         db.session.commit()
         print("User 'shayan' added to the database!")

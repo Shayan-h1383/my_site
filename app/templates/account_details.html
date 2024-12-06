@@ -14,7 +14,7 @@
         <div class="card-body">
             <!-- User Information -->
             <p><strong>Username:</strong> {{ current_user.username }}</p>
-            <p><strong>Password:</strong> **********</p>  <!-- Password masked -->
+            <p><strong>email:</strong> {{ current_user.email}} </p>
             <p><strong>Number of Reviews:</strong> {{ current_user.reviews.count() }}</p>
             <p><strong>Number of Liked Books:</strong> {{ current_user.liked_books|length }}</p>
         </div>
